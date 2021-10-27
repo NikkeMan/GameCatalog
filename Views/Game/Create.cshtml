@@ -1,0 +1,94 @@
+﻿ @* model GameCatalog.Models.GameModel *@
+@using GameCatalog.Models;
+
+@model ViewModel
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Create</h2>
+
+
+@using (Html.BeginForm()) {
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Add a new game</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="col-md-6">
+        @*Title*@
+        <div class="form-group">
+            @Html.LabelFor(model => model.Game.Title, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.Game.Title, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Game.Title, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        @*Developer*@
+        <div class="form-group">
+            @Html.LabelFor(model => model.Game.Developer, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.Game.Developer, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Game.Developer, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        @*ReleaseDate*@
+        <div class="form-group">
+            @Html.LabelFor(model => model.Game.ReleaseDate, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.Game.ReleaseDate, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
+                @Html.ValidationMessageFor(model => model.Game.ReleaseDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+        @*Genres*@
+        <div class="col-md-3">
+            <h4>Genres</h4>
+            <ul class="list-group">
+                @foreach (GenreModel genre in Model.Genres) {
+                    <li class="list-group-item">
+                        @Html.DisplayFor(modelItem => genre.Name)
+                    </li>
+                }
+            </ul>
+            @*<table class="table table-hover">
+                @foreach (GenreModel genre in Model.Genres) {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => genre.Name)
+                        </td>
+                    </tr>
+                }
+            </table>*@
+        </div>
+        @*Platforms*@
+        <div class="col-md-3">
+            <h4>Platforms</h4>
+            <table class="table table-hover">
+                @foreach (PlatformModel platform in Model.Platforms) {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => platform.Name)
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Create" disabled class="btn btn-default" />
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
