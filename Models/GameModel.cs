@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Web;
 
@@ -8,7 +9,8 @@ namespace GameCatalog.Models {
         public int GameID { get; set; }
         public string Title { get; set; }
         public string Developer { get; set; }
-        public DateTime ReleaseDate { get; set; }
+        [DisplayName ("Release Date")]
+        public string ReleaseDate { get; set; }
         public string Genres { get; set; }
         public string Platforms { get; set; }
 
@@ -16,7 +18,7 @@ namespace GameCatalog.Models {
             GameID = -1;
             Title = "";
             Developer = "";
-            ReleaseDate = DateTime.Now;
+            ReleaseDate = DateTime.Now.ToShortDateString();
             Genres = "";
             Platforms = "";
         }
@@ -25,7 +27,7 @@ namespace GameCatalog.Models {
             GameID = gameID;
             Title = title;
             Developer = developer;
-            ReleaseDate = releaseDate;
+            ReleaseDate = releaseDate.ToShortDateString();
             Genres = genres;
             Platforms = platforms;
         }

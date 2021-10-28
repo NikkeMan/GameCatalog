@@ -10,11 +10,11 @@ namespace GameCatalog.Models {
 
         public PlatformModel() {
             PlatformID = -1;
-            Name = "PlatformName";
+            Name = "";
         }
 
-        public PlatformModel(int genreID, string name) {
-            PlatformID = genreID;
+        public PlatformModel(int platformID, string name) {
+            PlatformID = platformID;
             Name = name;
         }
     }

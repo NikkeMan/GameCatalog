@@ -10,7 +10,7 @@ namespace GameCatalog.Models {
 
         public GenreModel() {
             GenreID = -1;
-            Name = "GenreName";
+            Name = "";
         }
 
         public GenreModel(int genreID, string name) {

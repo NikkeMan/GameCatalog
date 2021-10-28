@@ -8,13 +8,13 @@
 <h2>Games</h2>
 
 <p>
-    @Html.ActionLink("Add a new game...", "Create")
+    @Html.ActionLink("Add a new game...", "AddNew")
 </p>
 <table class="table">
     <tr>
-        <th>
+        @*<th>
             @Html.DisplayNameFor(model => model.GameID)
-        </th>
+        </th>*@
         <th>
             @Html.DisplayNameFor(model => model.Title)
         </th>
@@ -35,9 +35,9 @@
 
 @foreach (var item in Model) {
     <tr>
-        <td>
+        @*<td>
             @Html.DisplayFor(modelItem => item.GameID)
-        </td>
+        </td>*@
         <td>
             @Html.DisplayFor(modelItem => item.Title)
         </td>
@@ -60,5 +60,4 @@
         </td>
     </tr>
 }
-
 </table>

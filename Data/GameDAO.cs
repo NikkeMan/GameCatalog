@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace GameCatalog.Data {
     public class GameDAO {
 
 		//Connection string for a local database named games_db: 
-        private readonly string connectionString = "Data Source=.;Initial Catalog=games_db;Integrated Security=True";
+        private readonly string connectionString = "Data Source=.;Initial Catalog=games_db;Integrated Security=True; MultipleActiveResultSets=true";
 
         public List<GameModel> SelectAll() {
             List<GameModel> returnList = new List<GameModel>();
@@ -18,23 +19,24 @@ namespace GameCatalog.Data {
 
 				// SQL query that selects all the data from the database:
 				string sqlQuery = @"SELECT game.*, g.genres, p.platforms FROM game
-						JOIN(SELECT game.game_ID, STRING_AGG(genre.name, ', ')
-							WITHIN GROUP(ORDER BY genre.name) AS genres FROM game
-							INNER JOIN game_genre
-							ON game.game_ID = game_genre.game_ID
-							INNER JOIN genre
-							ON genre.genre_ID = game_genre.genre_ID
-							GROUP BY game.game_ID) AS g
-						ON game.game_ID = g.game_ID
+								LEFT JOIN (SELECT game.game_ID, STRING_AGG(genre.name, ', ')
+									WITHIN GROUP (ORDER BY genre.name) AS genres FROM game 
+									INNER JOIN game_genre
+									ON game.game_ID = game_genre.game_ID
+									INNER JOIN genre
+									ON genre.genre_ID = game_genre.genre_ID
+									GROUP BY game.game_ID) AS g
+								ON game.game_ID = g.game_ID
 
-						JOIN(SELECT game.game_ID, STRING_AGG(platform.name, ', ')
-							WITHIN GROUP(ORDER BY platform.name) AS platforms FROM game
-							INNER JOIN game_platform
-							ON game.game_ID = game_platform.game_ID
-							INNER JOIN platform
-							ON platform.platform_ID = game_platform.platform_ID
-							GROUP BY game.game_ID) AS p
-						ON game.game_ID = p.game_ID";
+								LEFT JOIN (SELECT game.game_ID, STRING_AGG(platform.name, ', ')
+									WITHIN GROUP (ORDER BY platform.name) AS platforms FROM game 
+									INNER JOIN game_platform
+									ON game.game_ID = game_platform.game_ID
+									INNER JOIN platform
+									ON platform.platform_ID = game_platform.platform_ID
+									GROUP BY game.game_ID) AS p
+								ON game.game_ID = p.game_ID
+								;";
 
 				SqlCommand command = new SqlCommand(sqlQuery, connection);
 
@@ -50,7 +52,7 @@ namespace GameCatalog.Data {
                             GameID = reader.GetInt32(0),
                             Title = reader.GetString(1),
                             Developer = reader.GetString(2),
-                            ReleaseDate = reader.GetDateTime(3),
+                            ReleaseDate = reader.GetDateTime(3).ToShortDateString(),
                             Genres = reader.GetString(4),
                             Platforms = reader.GetString(5)
                         };
@@ -103,7 +105,7 @@ namespace GameCatalog.Data {
 						gameModel.GameID = reader.GetInt32(0);
 						gameModel.Title = reader.GetString(1);
 						gameModel.Developer = reader.GetString(2);
-						gameModel.ReleaseDate = reader.GetDateTime(3);
+						gameModel.ReleaseDate = reader.GetDateTime(3).ToShortDateString();
 						gameModel.Genres = reader.GetString(4);
 						gameModel.Platforms = reader.GetString(5);
 					}
@@ -112,8 +114,8 @@ namespace GameCatalog.Data {
 			return gameModel;
 		}
 
-		public List<GenreModel> SelectGenres() {
-			List<GenreModel> genres = new List<GenreModel>();
+		public List<SelectListItem> SelectGenres() {
+			List<SelectListItem> genres = new List<SelectListItem>();
 
 			using (SqlConnection connection = new SqlConnection(connectionString)) {
 
@@ -129,20 +131,20 @@ namespace GameCatalog.Data {
 				SqlDataReader reader = command.ExecuteReader();
 				if (reader.HasRows) {
 					while (reader.Read()) {
-						// Create new GenreModel object and add it to the list::
-						GenreModel genre = new GenreModel {
-							GenreID = reader.GetInt32(0),
-							Name = reader.GetString(1)
-						};
-						genres.Add(genre);
+                        // Create new SelectListItem object and add it to the list:
+                        genres.Add(new SelectListItem { Value = reader.GetInt32(0).ToString(), Text = reader.GetString(1) });
+						//genres.Add(new GenreModel {
+						//	GenreID = reader.GetInt32(0),
+						//	Name = reader.GetString(1)
+						//});
 					}
 				}
 			}
 			return genres;
         }
 
-		public List<PlatformModel> SelectPlatforms() {
-			List<PlatformModel> platforms = new List<PlatformModel>();
+		public List<SelectListItem> SelectPlatforms() {
+			List<SelectListItem> platforms = new List<SelectListItem>();
 
 			using (SqlConnection connection = new SqlConnection(connectionString)) {
 
@@ -158,16 +160,96 @@ namespace GameCatalog.Data {
 				SqlDataReader reader = command.ExecuteReader();
 				if (reader.HasRows) {
 					while (reader.Read()) {
-						// Create new PlatformModel object and add it to the list:
-						PlatformModel platform = new PlatformModel {
-							PlatformID = reader.GetInt32(0),
-							Name = reader.GetString(1)
-						};
-						platforms.Add(platform);
-					}
+                        // Create new SelectListItem object and add it to the list:
+                        platforms.Add(new SelectListItem { Value = reader.GetInt32(0).ToString(), Text = reader.GetString(1) });
+                        //platforms.Add(new PlatformModel {
+                        //	PlatformID = reader.GetInt32(0),
+                        //	Name = reader.GetString(1)
+                        //});
+                    }
 				}
 			}
 			return platforms;
 		}
+
+		//public List<SelectListItem> GetSelectedGenres() {
+		//	List<SelectListItem> list = new List<SelectListItem>();
+		//	return list;
+		//}
+
+		//public List<SelectListItem> GetSelectedPlatforms() {
+		//	List<SelectListItem> list = new List<SelectListItem>();
+		//	return list;
+		//}
+
+		public void InsertNew(ViewModel model) {
+			int gameID = -1;
+
+			// Insert title, developer & releaseDate to the 'game' table:
+			string sqlQuery1 = @"INSERT INTO game(title, developer, release_date) 
+									VALUES (@title, @developer, @release_date)";
+
+			// Get the game_id of newly created entry:
+			string sqlQuery2 = @"SELECT game_id FROM game WHERE title = @title";
+
+			// Insert each selected genre to the 'game_genre' table using game_id:
+			string sqlQuery3 = @"INSERT INTO game_genre (game_ID, genre_ID) VALUES (@game_ID, @genre_ID)";
+
+			// Insert each selected platform to the 'game_platform' table using game_id:
+			string sqlQuery4 = @"INSERT INTO game_platform (game_ID, platform_ID) VALUES (@game_ID, @platform_ID)";
+
+			using (SqlConnection connection = new SqlConnection(connectionString)) {
+				// Open connection:
+				connection.Open();
+
+				// 1st query:
+				using (SqlCommand command = new SqlCommand(sqlQuery1, connection)) {
+					command.Parameters.Add("@title", System.Data.SqlDbType.VarChar, 50).Value = model.Title;
+					command.Parameters.Add("@developer", System.Data.SqlDbType.VarChar, 50).Value = model.Developer;
+					command.Parameters.Add("@release_date", System.Data.SqlDbType.Date).Value = model.ReleaseDate.ToShortDateString();
+
+					command.ExecuteNonQuery();
+				}
+
+				// 2nd query:
+				using (SqlCommand command = new SqlCommand(sqlQuery2, connection)) {
+					command.Parameters.Add("@title", System.Data.SqlDbType.VarChar, 50).Value = model.Title;
+					SqlDataReader reader = command.ExecuteReader();
+					if (reader.HasRows) {
+						while (reader.Read()) {
+							gameID = reader.GetInt32(0);
+						}
+					}
+				}
+
+				// 3rd query:
+				using (SqlCommand command = new SqlCommand(sqlQuery3, connection)) {
+					command.Parameters.Add("@game_ID", System.Data.SqlDbType.Int).Value = gameID;
+					command.Parameters.Add("@genre_ID", System.Data.SqlDbType.Int);
+					foreach (int genreID in model.SelectedGenres) {
+						//command.Parameters["@genre_ID"].Value = genre.Value;
+						command.Parameters["@genre_ID"].Value = genreID;
+
+						command.ExecuteNonQuery();
+					}
+				}
+
+				// 4th query:
+				using (SqlCommand command = new SqlCommand(sqlQuery4, connection)) {
+					command.Parameters.Add("@game_ID", System.Data.SqlDbType.Int).Value = gameID;
+					command.Parameters.Add("@platform_ID", System.Data.SqlDbType.Int);
+					foreach (int platformID in model.SelectedGenres) {
+						//command.Parameters["@platform_ID"].Value = platform.Value;
+						command.Parameters["@platform_ID"].Value = platformID;
+
+						command.ExecuteNonQuery();
+					}
+				}
+			}
+        }
+
+		// TODO: Delete
+
+		// TODO: Update
 	}
 }

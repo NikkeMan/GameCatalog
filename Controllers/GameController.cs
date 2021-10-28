@@ -27,19 +27,43 @@ namespace GameCatalog.Controllers
             return View("Details", game);
         }
 
-        public ActionResult Create() {
+        public ActionResult AddNew() {
 
             GameDAO gameDAO = new GameDAO();
 
-            ViewModel viewModel = new ViewModel();
+            ViewModel viewModel = new ViewModel {
+                // Get a list of genres:
+                Genres = gameDAO.SelectGenres(),
+                // Get a list of platforms:
+                Platforms = gameDAO.SelectPlatforms()
+            };
 
-            viewModel.Game = new GameModel();
-            // Get a list of genres:
-            viewModel.Genres = gameDAO.SelectGenres();
-            // Get a list of platforms:
-            viewModel.Platforms = gameDAO.SelectPlatforms();
+            return View("AddNew", viewModel);
+        }
 
-            return View("Create", viewModel);
+        public ActionResult Insert(ViewModel model) {
+            GameDAO gameDAO = new GameDAO();
+
+            ////Get selected genres in Genres list:
+            //List<SelectListItem> selectedGenres = gameDAO.GetSelectedGenres();
+
+            //// Get selected platforms in Platforms list:
+            //List<SelectListItem> selectedPlatforms = gameDAO.GetSelectedPlatforms();
+
+            //ViewModel newModel = new ViewModel {
+            //    Title = model.Title,
+            //    Developer = model.Developer,
+            //    ReleaseDate = model.ReleaseDate
+            //};
+
+            try {
+                gameDAO.InsertNew(model);
+
+                return View("Success");
+            }
+            catch (Exception e) {
+                throw e;
+            }
         }
     }
 }
