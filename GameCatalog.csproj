@@ -170,8 +170,7 @@
     <Content Include="Views\Game\Index.cshtml" />
     <Content Include="Views\Game\Details.cshtml" />
     <Content Include="Views\Game\AddNew.cshtml" />
-    <Content Include="Views\Game\Success.cshtml" />
-    <Content Include="Views\Game\Failed.cshtml" />
+    <Content Include="Views\Game\Result.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

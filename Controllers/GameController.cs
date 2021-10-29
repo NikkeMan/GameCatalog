@@ -12,57 +12,70 @@ namespace GameCatalog.Controllers
     public class GameController : Controller
     {
         public ActionResult Index() {
-
             GameDAO gameDAO = new GameDAO();
+            // Get a list of all games:
             List<GameModel> games = gameDAO.SelectAll();
-
             return View("Index", games);
         }
 
-        public ActionResult Details(int id) {
-
+        public ActionResult Details(int gameID) {
             GameDAO gameDAO = new GameDAO();
-            GameModel game = gameDAO.SelectOne(id);
-
+            // Get a game from database using gameID:
+            GameModel game = gameDAO.SelectOne(gameID);
             return View("Details", game);
         }
 
         public ActionResult AddNew() {
-
             GameDAO gameDAO = new GameDAO();
-
             ViewModel viewModel = new ViewModel {
-                // Get a list of genres:
+                // Get a list of all genres:
                 Genres = gameDAO.SelectGenres(),
-                // Get a list of platforms:
+                // Get a list of all platforms:
                 Platforms = gameDAO.SelectPlatforms()
             };
-
             return View("AddNew", viewModel);
         }
 
         public ActionResult Insert(ViewModel model) {
             GameDAO gameDAO = new GameDAO();
 
-            ////Get selected genres in Genres list:
-            //List<SelectListItem> selectedGenres = gameDAO.GetSelectedGenres();
+            //Check if game already exists in the database:
+            bool gameExistsInDB = gameDAO.CheckIfExists(model.Title);
 
-            //// Get selected platforms in Platforms list:
-            //List<SelectListItem> selectedPlatforms = gameDAO.GetSelectedPlatforms();
+            if (gameExistsInDB == false) {
+                // Add the game to the database:
+                try {
+                    gameDAO.InsertNew(model);
+                    ViewBag.ResultTitle = "Success!";
+                    ViewBag.ResultMessage = "The game was added to the database.";
+                    return View("Result");
+                }
+                catch (Exception e) {
+                    ViewBag.ResultTitle = "Failed...";
+                    ViewBag.ResultMessage = e.Message;
+                    return View("Result");
+                }
+            }
+            else {
+                // Game already exists in database:
+                ViewBag.ResultTitle = "Failed...";
+                ViewBag.ResultMessage = "The game you tried to add already exists in the database.";
+                return View("Result");
+            }
+        }
 
-            //ViewModel newModel = new ViewModel {
-            //    Title = model.Title,
-            //    Developer = model.Developer,
-            //    ReleaseDate = model.ReleaseDate
-            //};
-
+        public ActionResult Delete(int gameID) {
+            GameDAO gameDAO = new GameDAO();
             try {
-                gameDAO.InsertNew(model);
-
-                return View("Success");
+                gameDAO.Delete(gameID);
+                ViewBag.ResultTitle = "Success!";
+                ViewBag.ResultMessage = "The game was removed from the database.";
+                return View("Result");
             }
             catch (Exception e) {
-                throw e;
+                ViewBag.ResultTitle = "Failed...";
+                ViewBag.ResultMessage = e.Message;
+                return View("Result");
             }
         }
     }

@@ -12,9 +12,6 @@
 </p>
 <table class="table">
     <tr>
-        @*<th>
-            @Html.DisplayNameFor(model => model.GameID)
-        </th>*@
         <th>
             @Html.DisplayNameFor(model => model.Title)
         </th>
@@ -32,32 +29,30 @@
         </th>
         <th></th>
     </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        @*<td>
-            @Html.DisplayFor(modelItem => item.GameID)
-        </td>*@
-        <td>
-            @Html.DisplayFor(modelItem => item.Title)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Developer)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ReleaseDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Genres)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Platforms)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.GameID */ }) |
-            @Html.ActionLink("Details", "Details", new { id=item.GameID }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.GameID */ })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Developer)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReleaseDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Genres)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Platforms)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.GameID */ }) |
+                @Html.ActionLink("Details", "Details", new { gameID = item.GameID }) |
+                @Html.ActionLink("Delete", "Delete",
+                    new { gameID = item.GameID },
+                    new { onclick = $"return confirm('Are you sure you want to delete {item.Title}?')" })
+            </td>
+        </tr>
+    }
 </table>

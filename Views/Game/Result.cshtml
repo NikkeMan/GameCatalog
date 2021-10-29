@@ -1,10 +1,9 @@
-﻿
-@{
-    ViewBag.Title = "Failed";
+﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Failed!</h2>
-<p>Something went wrong...</p>
+<h2>@ViewBag.ResultTitle</h2>
+<p>@ViewBag.ResultMessage</p>
 
 @Html.ActionLink("Back to List", "Index")
+
