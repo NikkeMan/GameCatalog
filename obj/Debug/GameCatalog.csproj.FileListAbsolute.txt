@@ -1,3 +1,5 @@
+C:\Users\niko9\Documents\_programming\Visual Studio Projects\csharp\GameCatalog\obj\Debug\GameCatalog.csproj.AssemblyReference.cache
+C:\Users\niko9\Documents\_programming\Visual Studio Projects\csharp\GameCatalog\obj\Debug\GameCatalog.csproj.CoreCompileInputs.cache
 C:\Users\niko9\Documents\_programming\Visual Studio Projects\csharp\GameCatalog\bin\GameCatalog.dll.config
 C:\Users\niko9\Documents\_programming\Visual Studio Projects\csharp\GameCatalog\bin\GameCatalog.dll
 C:\Users\niko9\Documents\_programming\Visual Studio Projects\csharp\GameCatalog\bin\GameCatalog.pdb
@@ -72,7 +74,5 @@ C:\Users\niko9\Documents\_programming\Visual Studio Projects\csharp\GameCatalog\
 C:\Users\niko9\Documents\_programming\Visual Studio Projects\csharp\GameCatalog\bin\Newtonsoft.Json.xml
 C:\Users\niko9\Documents\_programming\Visual Studio Projects\csharp\GameCatalog\bin\Antlr3.Runtime.pdb
 C:\Users\niko9\Documents\_programming\Visual Studio Projects\csharp\GameCatalog\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-C:\Users\niko9\Documents\_programming\Visual Studio Projects\csharp\GameCatalog\obj\Debug\GameCatalog.csproj.AssemblyReference.cache
-C:\Users\niko9\Documents\_programming\Visual Studio Projects\csharp\GameCatalog\obj\Debug\GameCatalog.csproj.CoreCompileInputs.cache
 C:\Users\niko9\Documents\_programming\Visual Studio Projects\csharp\GameCatalog\obj\Debug\GameCatalog.dll
 C:\Users\niko9\Documents\_programming\Visual Studio Projects\csharp\GameCatalog\obj\Debug\GameCatalog.pdb

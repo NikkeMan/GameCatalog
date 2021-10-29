@@ -1,17 +1,17 @@
 ﻿@* model GameCatalog.Models.GameModel *@
 @using GameCatalog.Models;
 
-@model ViewModel
+@model GameModel
 
 @{
     ViewBag.Title = "Add a new game";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Add a new game</h2>
+<h2>@ViewBag.Title</h2>
 
 
-@using (Html.BeginForm("Insert", "Game")) {
+@using (Html.BeginForm("CreateOrUpdate", "Game")) {
     @Html.AntiForgeryToken()
 
 <div class="form-horizontal">
@@ -23,7 +23,7 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-4" })
                 <div class="col-md-8">
-                    @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                    @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control"} })
                     @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -31,7 +31,7 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.Developer, htmlAttributes: new { @class = "control-label col-md-4" })
                 <div class="col-md-8">
-                    @Html.EditorFor(model => model.Developer, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                    @Html.EditorFor(model => model.Developer, new { htmlAttributes = new { @class = "form-control"} })
                     @Html.ValidationMessageFor(model => model.Developer, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -39,7 +39,7 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.ReleaseDate, htmlAttributes: new { @class = "control-label col-md-4" })
                 <div class="col-md-8">
-                    @Html.EditorFor(model => model.ReleaseDate, new { htmlAttributes = new { @class = "form-control", @type = "date", @required = "required" } })
+                    @Html.EditorFor(model => model.ReleaseDate, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
                     @Html.ValidationMessageFor(model => model.ReleaseDate, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -52,10 +52,8 @@
                 @Html.LabelFor(model => model.SelectedGenres, htmlAttributes: new { @class = "control-label" })
             </div>
             <div class="col-md-8">
-                @*Html.ListBoxFor(model => Model.SelectedGenres, Model.Genres, new { size = 20, @id = "listbox_genres", @required = "required" })*@
-                @Html.ListBoxFor(model => Model.SelectedGenres, new SelectList(Model.Genres, "Value", "Text"), new { size = 20, @id = "listbox_genres", @required = "required" })
+                @Html.ListBoxFor(model => Model.SelectedGenres, new SelectList(Model.Genres, "Value", "Text"), new { size = 20, @id = "listbox_genres" })
             </div>
-            @Html.ValidationMessageFor(model => Model.SelectedGenres, "", new { @class = "text-danger" })
         </div>
         @*Platforms*@
         <div class="col-md-2">
@@ -63,9 +61,15 @@
                 @Html.LabelFor(model => model.SelectedPlatforms, htmlAttributes: new { @class = "control-label" })
             </div>
             <div class="col-md-8">
-                @*Html.ListBoxFor(model => Model.SelectedPlatforms, Model.Platforms, new { size = 20, @id = "listbox_genres", @required = "required" })*@
-                @Html.ListBoxFor(model => model.SelectedPlatforms, new SelectList(Model.Platforms, "Value", "Text"), new { size = 20, @id = "listbox_platforms", @required = "required" })
+                @Html.ListBoxFor(model => model.SelectedPlatforms, new SelectList(Model.Platforms, "Value", "Text"), new { size = 20, @id = "listbox_platforms" })
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            @Html.ValidationMessageFor(model => Model.SelectedGenres, "", new { @class = "text-danger" })
+        </div>
+        <div class="col-md-2">
             @Html.ValidationMessageFor(model => Model.SelectedPlatforms, "", new { @class = "text-danger" })
         </div>
     </div>
@@ -77,15 +81,17 @@
         <div class="form-group">
             <br />
             <div class="col-md-4 text-center">
-                <input type="submit" value="Add game" class="btn btn-default btn-lg" />
+                <input type="submit" value="Save" class="btn btn-default btn-lg" />
             </div>
         </div>
     </div>
 </div>
 }
 
+<input class="hidden" id="gameID" value="@Model.GameID"/>
+
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to Games", "Index")
 </div>
 
 @section Scripts {

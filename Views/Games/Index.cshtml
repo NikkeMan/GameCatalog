@@ -5,10 +5,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Games</h2>
+<h2>@ViewBag.Title</h2>
 
 <p>
-    @Html.ActionLink("Add a new game...", "AddNew")
+    @Html.ActionLink("Add a new game...", "Add")
 </p>
 <table class="table">
     <tr>
@@ -22,10 +22,10 @@
             @Html.DisplayNameFor(model => model.ReleaseDate)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Genres)
+            @Html.DisplayNameFor(model => model.GameGenres)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Platforms)
+            @Html.DisplayNameFor(model => model.GamePlatforms)
         </th>
         <th></th>
     </tr>
@@ -41,13 +41,13 @@
                 @Html.DisplayFor(modelItem => item.ReleaseDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Genres)
+                @Html.DisplayFor(modelItem => item.GameGenres)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Platforms)
+                @Html.DisplayFor(modelItem => item.GamePlatforms)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.GameID */ }) |
+                @Html.ActionLink("Edit", "Edit", item) |
                 @Html.ActionLink("Details", "Details", new { gameID = item.GameID }) |
                 @Html.ActionLink("Delete", "Delete",
                     new { gameID = item.GameID },

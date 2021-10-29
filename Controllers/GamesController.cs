@@ -9,43 +9,54 @@ using System.Web.Mvc;
 
 namespace GameCatalog.Controllers
 {
-    public class GameController : Controller
+    public class GamesController : Controller
     {
         public ActionResult Index() {
             GameDAO gameDAO = new GameDAO();
             // Get a list of all games:
-            List<GameModel> games = gameDAO.SelectAll();
-            return View("Index", games);
+            List<GameModel> models = gameDAO.SelectAll();
+            return View("Index", models);
         }
-
         public ActionResult Details(int gameID) {
             GameDAO gameDAO = new GameDAO();
             // Get a game from database using gameID:
-            GameModel game = gameDAO.SelectOne(gameID);
-            return View("Details", game);
+            GameModel model = gameDAO.SelectOne(gameID);
+            return View("Details", model);
         }
-
-        public ActionResult AddNew() {
+        public ActionResult Add() {
             GameDAO gameDAO = new GameDAO();
-            ViewModel viewModel = new ViewModel {
+            GameModel model = new GameModel {
                 // Get a list of all genres:
                 Genres = gameDAO.SelectGenres(),
                 // Get a list of all platforms:
                 Platforms = gameDAO.SelectPlatforms()
             };
-            return View("AddNew", viewModel);
-        }
 
-        public ActionResult Insert(ViewModel model) {
+            ViewBag.Title = "Add a new game";
+            return View("CreateOrUpdate", model);
+        }
+        public ActionResult Edit(GameModel model) {
             GameDAO gameDAO = new GameDAO();
 
-            //Check if game already exists in the database:
-            bool gameExistsInDB = gameDAO.CheckIfExists(model.Title);
+            // Get game genres:
+            model.SelectedGenres = gameDAO.SelectGameGenres(model.GameID);
+            // Get game platforms:
+            model.SelectedPlatforms = gameDAO.SelectGamePlatforms(model.GameID);
+            // Get a list of all genres:
+            model.Genres = gameDAO.SelectGenres();
+            // Get a list of all platforms:
+            model.Platforms = gameDAO.SelectPlatforms();
 
-            if (gameExistsInDB == false) {
-                // Add the game to the database:
+            ViewBag.Title = "Edit game";
+            return View("CreateOrUpdate", model);
+        }
+        public ActionResult CreateOrUpdate(GameModel model) {
+            GameDAO gameDAO = new GameDAO();
+
+            if (model.GameID == -1) {
+                // Add new game to the database:
                 try {
-                    gameDAO.InsertNew(model);
+                    gameDAO.Create(model);
                     ViewBag.ResultTitle = "Success!";
                     ViewBag.ResultMessage = "The game was added to the database.";
                     return View("Result");
@@ -57,13 +68,20 @@ namespace GameCatalog.Controllers
                 }
             }
             else {
-                // Game already exists in database:
-                ViewBag.ResultTitle = "Failed...";
-                ViewBag.ResultMessage = "The game you tried to add already exists in the database.";
-                return View("Result");
+                // Update existing game:
+                try {
+                    gameDAO.Update(model);
+                    ViewBag.ResultTitle = "Success!";
+                    ViewBag.ResultMessage = "The game was added to the database.";
+                    return View("Result");
+                }
+                catch (Exception e) {
+                    ViewBag.ResultTitle = "Failed...";
+                    ViewBag.ResultMessage = e.Message;
+                    return View("Result");
+                }
             }
         }
-
         public ActionResult Delete(int gameID) {
             GameDAO gameDAO = new GameDAO();
             try {

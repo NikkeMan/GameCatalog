@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details</h2>
+<h2>@ViewBag.Title</h2>
 
 <div>
     <hr />
@@ -35,20 +35,20 @@
             @Html.DisplayFor(model => model.ReleaseDate)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Genres)
+            @Html.DisplayNameFor(model => model.GameGenres)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Genres)
+            @Html.DisplayFor(model => model.GameGenres)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Platforms)
+            @Html.DisplayNameFor(model => model.GamePlatforms)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Platforms)
+            @Html.DisplayFor(model => model.GamePlatforms)
         </dd>
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Edit", "Edit", Model) |
+    @Html.ActionLink("Back to Games", "Index")
 </p>
