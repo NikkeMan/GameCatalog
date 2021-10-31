@@ -14,8 +14,9 @@ namespace GameCatalog.Models {
         [Required]
         public string Developer { get; set; }
         [Required]
+        [DataType(DataType.Date)]
         [DisplayName ("Release Date")]
-        [DisplayFormat (DataFormatString = "{0:yyyy-MM-dd}")]
+        [DisplayFormat (DataFormatString = "{0:dd.MM.yyyy}")]
         public DateTime ReleaseDate { get; set; }
         [Required]
         [DisplayName("Genres")]
@@ -23,6 +24,8 @@ namespace GameCatalog.Models {
         [Required]
         [DisplayName("Platforms")]
         public string GamePlatforms { get; set; }
+
+        // For form listboxes:
         public IEnumerable<SelectListItem> Genres { get; set; }
         public IEnumerable<SelectListItem> Platforms { get; set; }
         [Required]
@@ -37,13 +40,6 @@ namespace GameCatalog.Models {
             Title = "";
             Developer = "";
             ReleaseDate = DateTime.Now;
-        }
-
-        public GameModel(int gameID, string title, string developer, DateTime releaseDate, string genres, string platforms) {
-            GameID = gameID;
-            Title = title;
-            Developer = developer;
-            ReleaseDate = releaseDate;
         }
     }
 }

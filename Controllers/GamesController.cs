@@ -33,7 +33,7 @@ namespace GameCatalog.Controllers
             };
 
             ViewBag.Title = "Add a new game";
-            return View("CreateOrUpdate", model);
+            return View("GameForm", model);
         }
         public ActionResult Edit(GameModel model) {
             GameDAO gameDAO = new GameDAO();
@@ -48,38 +48,47 @@ namespace GameCatalog.Controllers
             model.Platforms = gameDAO.SelectPlatforms();
 
             ViewBag.Title = "Edit game";
-            return View("CreateOrUpdate", model);
+            return View("GameForm", model);
         }
-        public ActionResult CreateOrUpdate(GameModel model) {
+        public ActionResult SaveChanges(GameModel model) {
             GameDAO gameDAO = new GameDAO();
 
-            if (model.GameID == -1) {
-                // Add new game to the database:
-                try {
-                    gameDAO.Create(model);
-                    ViewBag.ResultTitle = "Success!";
-                    ViewBag.ResultMessage = "The game was added to the database.";
-                    return View("Result");
+            // Make sure none of the values are empty:
+            if (gameDAO.CheckIfEmptyForm(model)) {
+                if (model.GameID == -1) {
+                    // Add new game to the database:
+                    try {
+                        gameDAO.Create(model);
+                        ViewBag.ResultTitle = "Success!";
+                        ViewBag.ResultMessage = "The game was added to the database.";
+                        return View("Result");
+                    }
+                    catch (Exception e) {
+                        ViewBag.ResultTitle = "Failed...";
+                        ViewBag.ResultMessage = e.Message;
+                        return View("Result");
+                    }
                 }
-                catch (Exception e) {
-                    ViewBag.ResultTitle = "Failed...";
-                    ViewBag.ResultMessage = e.Message;
-                    return View("Result");
+                else {
+                    // Update existing game:
+                    try {
+                        gameDAO.Update(model);
+                        ViewBag.ResultTitle = "Success!";
+                        ViewBag.ResultMessage = "The changes have been saved to the database.";
+                        return View("Result");
+                    }
+                    catch (Exception e) {
+                        ViewBag.ResultTitle = "Failed...";
+                        ViewBag.ResultMessage = e.Message;
+                        return View("Result");
+                    }
                 }
             }
             else {
-                // Update existing game:
-                try {
-                    gameDAO.Update(model);
-                    ViewBag.ResultTitle = "Success!";
-                    ViewBag.ResultMessage = "The game was added to the database.";
-                    return View("Result");
-                }
-                catch (Exception e) {
-                    ViewBag.ResultTitle = "Failed...";
-                    ViewBag.ResultMessage = e.Message;
-                    return View("Result");
-                }
+                // Invalid form:
+                ViewBag.ResultTitle = "Failed...";
+                ViewBag.ResultMessage = "Trying to add to the database with an invalid form.";
+                return View("Result");
             }
         }
         public ActionResult Delete(int gameID) {

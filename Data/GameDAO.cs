@@ -168,6 +168,58 @@ namespace GameCatalog.Data {
 			return platforms;
 		}
 
+		public List<int> SelectGameGenres(int gameID) {
+			List<int> genreIDs = new List<int>();
+
+			using (SqlConnection connection = new SqlConnection(connectionString)) {
+
+				// SQL query that returns all game genres:
+				string sqlQuery = @"SELECT genre_ID from game_genre WHERE game_ID = @gameID";
+
+				SqlCommand command = new SqlCommand(sqlQuery, connection);
+				command.Parameters.Add("@gameID", System.Data.SqlDbType.Int).Value = gameID;
+
+				// Open connection:
+				connection.Open();
+
+				// Read data: 
+				SqlDataReader reader = command.ExecuteReader();
+				if (reader.HasRows) {
+					while (reader.Read()) {
+						genreIDs.Add(reader.GetInt32(0));
+					}
+				}
+			}
+
+			return genreIDs;
+		}
+
+		public List<int> SelectGamePlatforms(int gameID) {
+			List<int> platformIDs = new List<int>();
+
+			using (SqlConnection connection = new SqlConnection(connectionString)) {
+
+				// SQL query that returns all game platforms:
+				string sqlQuery = @"SELECT platform_ID from game_platform WHERE game_ID = @gameID";
+
+				SqlCommand command = new SqlCommand(sqlQuery, connection);
+				command.Parameters.Add("@gameID", System.Data.SqlDbType.Int).Value = gameID;
+
+				// Open connection:
+				connection.Open();
+
+				// Read data: 
+				SqlDataReader reader = command.ExecuteReader();
+				if (reader.HasRows) {
+					while (reader.Read()) {
+						platformIDs.Add(reader.GetInt32(0));
+					}
+				}
+			}
+
+			return platformIDs;
+		}
+
 		public void Create(GameModel model) {
 			// Insert title, developer & releaseDate to the 'game' table:
 			string sqlQuery1 = @"INSERT INTO game(title, developer, release_date) 
@@ -238,13 +290,13 @@ namespace GameCatalog.Data {
 			string sqlQuery2 = @"DELETE FROM game_genre WHERE game_ID = @gameID";
 
 			// Add new values to game_genre:
-			string sqlQuery3 = @"INSERT INTO game_genre (game_ID, genre_ID) VALUES (@gameID, genreID)";
+			string sqlQuery3 = @"INSERT INTO game_genre (game_ID, genre_ID) VALUES (@gameID, @genreID)";
 
 			// Delete old values from game_genre: 
 			string sqlQuery4 = @"DELETE FROM game_platform WHERE game_ID = @gameID";
 
 			// Add new values to game_genre:
-			string sqlQuery5 = @"INSERT INTO game_platform (game_ID, platform_ID) VALUES (@gameID, platformID)";
+			string sqlQuery5 = @"INSERT INTO game_platform (game_ID, platform_ID) VALUES (@gameID, @platformID)";
 
 			using (SqlConnection connection = new SqlConnection(connectionString)) {
 				// Open connection:
@@ -253,9 +305,9 @@ namespace GameCatalog.Data {
 				// 1st query:
 				using (SqlCommand command = new SqlCommand(sqlQuery1, connection)) {
 					command.Parameters.Add("@gameID", System.Data.SqlDbType.Int).Value = model.GameID;
-					command.Parameters.Add("@title", System.Data.SqlDbType.VarChar, 50).Value = model.GameID;
+					command.Parameters.Add("@title", System.Data.SqlDbType.VarChar, 50).Value = model.Title;
 					command.Parameters.Add("@developer", System.Data.SqlDbType.VarChar, 50).Value = model.Developer;
-					command.Parameters.Add("@releaseDate", System.Data.SqlDbType.Date).Value = model.ReleaseDate;
+					command.Parameters.Add("@releaseDate", System.Data.SqlDbType.Date).Value = model.ReleaseDate.ToShortDateString();
 					command.ExecuteNonQuery();
 				}
 
@@ -267,8 +319,9 @@ namespace GameCatalog.Data {
 
 				// 3rd query:
 				using (SqlCommand command = new SqlCommand(sqlQuery3, connection)) {
-					command.Parameters.Add("@gameID", System.Data.SqlDbType.Int).Value = model.GameID;
 					foreach (int genreID in model.SelectedGenres) {
+						command.Parameters.Clear();
+						command.Parameters.Add("@gameID", System.Data.SqlDbType.Int).Value = model.GameID;
 						command.Parameters.Add("@genreID", System.Data.SqlDbType.Int).Value = genreID;
 						command.ExecuteNonQuery();
 					}
@@ -282,8 +335,9 @@ namespace GameCatalog.Data {
 
 				// 5nd query:
 				using (SqlCommand command = new SqlCommand(sqlQuery5, connection)) {
-					command.Parameters.Add("@gameID", System.Data.SqlDbType.Int).Value = model.GameID;
 					foreach (int platformID in model.SelectedPlatforms) {
+						command.Parameters.Clear();
+						command.Parameters.Add("@gameID", System.Data.SqlDbType.Int).Value = model.GameID;
 						command.Parameters.Add("@platformID", System.Data.SqlDbType.Int).Value = platformID;
 						command.ExecuteNonQuery();
 					}
@@ -326,8 +380,6 @@ namespace GameCatalog.Data {
 		}
 
 		public bool CheckIfExists(string gameTitle) {
-			bool gameExistsInDB = false;
-
 			using (SqlConnection connection = new SqlConnection(connectionString)) {
 				// SQL query that returns an entry from the database based on title:
 				string sqlQuery = @"SELECT title FROM game WHERE title = @title";
@@ -339,70 +391,26 @@ namespace GameCatalog.Data {
 				// Open connection:
 				connection.Open();
 
-                try {
+				try {
 					SqlDataReader reader = command.ExecuteReader();
 					if (reader.HasRows) {
 						// Game already exists in database:
-						gameExistsInDB = true;
+						return true;
 					}
 				}
-                catch (NullReferenceException) {
+				catch (NullReferenceException) {
 					// Nothing was found:
-                }
-			}
-			return gameExistsInDB;
-        }
-
-        public List<int> SelectGameGenres(int gameID) {
-			List<int> genreIDs = new List<int>();
-
-			using (SqlConnection connection = new SqlConnection(connectionString)) {
-
-				// SQL query that returns all game genres:
-				string sqlQuery = @"SELECT genre_ID from game_genre WHERE game_ID = @gameID";
-
-				SqlCommand command = new SqlCommand(sqlQuery, connection);
-				command.Parameters.Add("@gameID", System.Data.SqlDbType.Int).Value = gameID;
-
-				// Open connection:
-				connection.Open();
-
-				// Read data: 
-				SqlDataReader reader = command.ExecuteReader();
-				if (reader.HasRows) {
-					while (reader.Read()) {
-						genreIDs.Add(reader.GetInt32(0));
-					}
 				}
 			}
-
-			return genreIDs;
-        }
-
-		public List<int> SelectGamePlatforms(int gameID) {
-			List<int> platformIDs = new List<int>();
-
-			using (SqlConnection connection = new SqlConnection(connectionString)) {
-
-				// SQL query that returns all game platforms:
-				string sqlQuery = @"SELECT platform_ID from game_platform WHERE game_ID = @gameID";
-
-				SqlCommand command = new SqlCommand(sqlQuery, connection);
-				command.Parameters.Add("@gameID", System.Data.SqlDbType.Int).Value = gameID;
-
-				// Open connection:
-				connection.Open();
-
-				// Read data: 
-				SqlDataReader reader = command.ExecuteReader();
-				if (reader.HasRows) {
-					while (reader.Read()) {
-						platformIDs.Add(reader.GetInt32(0));
-					}
-				}
-			}
-
-			return platformIDs;
+			return false;
 		}
+
+		public bool CheckIfEmptyForm(GameModel model) {
+			// When trying to add to the database, make sure none of the values are empty/unassigned:
+			if (model.Title == "" || model.Developer == "" || model.ReleaseDate == DateTime.MinValue || !model.SelectedGenres.Any() || !model.SelectedPlatforms.Any()) {
+				return false;
+            }
+			else return true;
+        }
     }
 }

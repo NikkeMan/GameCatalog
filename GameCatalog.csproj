@@ -168,7 +168,7 @@
     <Content Include="Views\Home\TestPage.cshtml" />
     <Content Include="Views\Games\Index.cshtml" />
     <Content Include="Views\Games\Details.cshtml" />
-    <Content Include="Views\Games\CreateOrUpdate.cshtml" />
+    <Content Include="Views\Games\GameForm.cshtml" />
     <Content Include="Views\Games\Result.cshtml" />
   </ItemGroup>
   <ItemGroup>
