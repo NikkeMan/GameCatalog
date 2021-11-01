@@ -24,8 +24,6 @@ namespace GameCatalog.Models {
         [Required]
         [DisplayName("Platforms")]
         public string GamePlatforms { get; set; }
-
-        // For form listboxes:
         public IEnumerable<SelectListItem> Genres { get; set; }
         public IEnumerable<SelectListItem> Platforms { get; set; }
         [Required]

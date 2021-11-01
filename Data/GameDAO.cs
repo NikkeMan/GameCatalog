@@ -11,12 +11,11 @@ namespace GameCatalog.Data {
 
 		//Connection string for a local database named games_db: 
         private readonly string connectionString = "Data Source=.;Initial Catalog=games_db;Integrated Security=True; MultipleActiveResultSets=true";
-
-        public List<GameModel> SelectAll() {
+		// Selects all games from the database:
+		public List<GameModel> SelectAll() {
             List<GameModel> returnList = new List<GameModel>();
 
 			using(SqlConnection connection = new SqlConnection(connectionString)) {
-
 				// SQL query that selects all the data from the database:
 				string sqlQuery = @"SELECT game.*, g.genres, p.platforms FROM game
 								LEFT JOIN (SELECT game.game_ID, STRING_AGG(genre.name, ', ')
@@ -64,12 +63,11 @@ namespace GameCatalog.Data {
 			}
             return returnList;
         }
-
+		// Selects one game from the database, by using gameID:
 		public GameModel SelectOne(int gameID) {
 			GameModel gameModel = new GameModel();
 
 			using (SqlConnection connection = new SqlConnection(connectionString)) {
-
 				// SQL query that returns an entry from the database based on game_ID:
 				string sqlQuery = @"SELECT game.*, g.genres, p.platforms FROM game
 						JOIN(SELECT game.game_ID, STRING_AGG(genre.name, ', ')
@@ -113,8 +111,8 @@ namespace GameCatalog.Data {
 			}
 			return gameModel;
 		}
-
-		public List<SelectListItem> SelectGenres() {
+		// Selects all genres:
+		public List<SelectListItem> SelectAllGenres() {
 			List<SelectListItem> genres = new List<SelectListItem>();
 
 			using (SqlConnection connection = new SqlConnection(connectionString)) {
@@ -138,8 +136,8 @@ namespace GameCatalog.Data {
 			}
 			return genres;
         }
-
-		public List<SelectListItem> SelectPlatforms() {
+		// Selects all platforms:
+		public List<SelectListItem> SelectAllPlatforms() {
 			List<SelectListItem> platforms = new List<SelectListItem>();
 
 			using (SqlConnection connection = new SqlConnection(connectionString)) {
@@ -167,7 +165,7 @@ namespace GameCatalog.Data {
 			}
 			return platforms;
 		}
-
+		// Selects all game specific genres:
 		public List<int> SelectGameGenres(int gameID) {
 			List<int> genreIDs = new List<int>();
 
@@ -193,7 +191,7 @@ namespace GameCatalog.Data {
 
 			return genreIDs;
 		}
-
+		// Selects all game specific platforms:
 		public List<int> SelectGamePlatforms(int gameID) {
 			List<int> platformIDs = new List<int>();
 
@@ -219,7 +217,7 @@ namespace GameCatalog.Data {
 
 			return platformIDs;
 		}
-
+		// Adds a new game to the database:
 		public void Create(GameModel model) {
 			// Insert title, developer & releaseDate to the 'game' table:
 			string sqlQuery1 = @"INSERT INTO game(title, developer, release_date) 
@@ -280,7 +278,7 @@ namespace GameCatalog.Data {
 				}
 			}
 		}
-
+		// Updates an existing game:
 		public void Update(GameModel model) {
 			// Update game table:
 			string sqlQuery1 = @"UPDATE game SET title = @title, developer = @developer, release_date = @releaseDate
@@ -344,7 +342,7 @@ namespace GameCatalog.Data {
 				}
 			}
 		}
-
+		// Deletes a game from the database:
 		public void Delete(int gameID) {
 			// Delete all game entries from 'game_genre' table:
 			string sqlQuery1 = @"DELETE FROM game_genre WHERE game_ID = @gameID";
@@ -378,7 +376,7 @@ namespace GameCatalog.Data {
 				}
 			}
 		}
-
+		// Checks if game exists in the database: 
 		public bool CheckIfExists(string gameTitle) {
 			using (SqlConnection connection = new SqlConnection(connectionString)) {
 				// SQL query that returns an entry from the database based on title:
@@ -404,9 +402,8 @@ namespace GameCatalog.Data {
 			}
 			return false;
 		}
-
+		// Checks if the filled form has empty values:
 		public bool CheckIfEmptyForm(GameModel model) {
-			// When trying to add to the database, make sure none of the values are empty/unassigned:
 			if (model.Title == "" || model.Developer == "" || model.ReleaseDate == DateTime.MinValue || !model.SelectedGenres.Any() || !model.SelectedPlatforms.Any()) {
 				return false;
             }

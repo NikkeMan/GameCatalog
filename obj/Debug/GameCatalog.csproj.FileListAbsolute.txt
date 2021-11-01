@@ -76,3 +76,4 @@ C:\Users\niko9\Documents\_programming\Visual Studio Projects\csharp\GameCatalog\
 C:\Users\niko9\Documents\_programming\Visual Studio Projects\csharp\GameCatalog\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
 C:\Users\niko9\Documents\_programming\Visual Studio Projects\csharp\GameCatalog\obj\Debug\GameCatalog.dll
 C:\Users\niko9\Documents\_programming\Visual Studio Projects\csharp\GameCatalog\obj\Debug\GameCatalog.pdb
+C:\Users\niko9\Documents\_programming\Visual Studio Projects\csharp\GameCatalog\obj\Debug\GameCatalog.csproj.CopyComplete

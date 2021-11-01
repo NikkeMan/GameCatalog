@@ -17,19 +17,14 @@ namespace GameCatalog.Controllers
             List<GameModel> models = gameDAO.SelectAll();
             return View("Index", models);
         }
-        public ActionResult Details(int gameID) {
-            GameDAO gameDAO = new GameDAO();
-            // Get a game from database using gameID:
-            GameModel model = gameDAO.SelectOne(gameID);
+        public ActionResult Details(GameModel model) {
             return View("Details", model);
         }
         public ActionResult Add() {
             GameDAO gameDAO = new GameDAO();
             GameModel model = new GameModel {
-                // Get a list of all genres:
-                Genres = gameDAO.SelectGenres(),
-                // Get a list of all platforms:
-                Platforms = gameDAO.SelectPlatforms()
+                Genres = gameDAO.SelectAllGenres(),
+                Platforms = gameDAO.SelectAllPlatforms()
             };
 
             ViewBag.Title = "Add a new game";
@@ -38,14 +33,10 @@ namespace GameCatalog.Controllers
         public ActionResult Edit(GameModel model) {
             GameDAO gameDAO = new GameDAO();
 
-            // Get game genres:
             model.SelectedGenres = gameDAO.SelectGameGenres(model.GameID);
-            // Get game platforms:
             model.SelectedPlatforms = gameDAO.SelectGamePlatforms(model.GameID);
-            // Get a list of all genres:
-            model.Genres = gameDAO.SelectGenres();
-            // Get a list of all platforms:
-            model.Platforms = gameDAO.SelectPlatforms();
+            model.Genres = gameDAO.SelectAllGenres();
+            model.Platforms = gameDAO.SelectAllPlatforms();
 
             ViewBag.Title = "Edit game";
             return View("GameForm", model);
